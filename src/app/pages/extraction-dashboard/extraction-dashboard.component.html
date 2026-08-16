@@ -1,0 +1,115 @@
+<!-- Header -->
+<div style="margin-bottom: 2rem;">
+  <h1 class="dashboard-title">INTELIGENCIA DE <span class="red">MERCADO</span></h1>
+</div>
+
+<!-- Metrics Panel -->
+<div class="metrics-panel">
+  <div class="metric-card">
+    <span class="metric-label">Productos Extraídos</span>
+    <span class="metric-value">{{ totalExtracted }}</span>
+    <div class="metric-sub">
+      <span>En Stock: <strong>{{ availabilityBreakdown.inStock }}</strong></span>
+      <span>Agotados: <strong>{{ availabilityBreakdown.outOfStock }}</strong></span>
+    </div>
+  </div>
+  
+  <div class="metric-card">
+    <span class="metric-label">Precio Promedio (COP)</span>
+    <span class="metric-value">${{ avgPrice | number:'1.0-0' }}</span>
+    <div class="metric-sub">
+      <span>Condición de Inventario:</span>
+    </div>
+  </div>
+
+  <div class="metric-card">
+    <span class="metric-label">Distribución de Condición</span>
+    <span class="metric-value">{{ conditionBreakdown.new }}</span>
+    <div class="metric-sub">
+      <span>Nuevos: <strong>{{ conditionBreakdown.new }}</strong></span>
+      <span>Usados: <strong>{{ conditionBreakdown.used }}</strong></span>
+      <span>Reacondicionados: <strong>{{ conditionBreakdown.refurb }}</strong></span>
+    </div>
+  </div>
+</div>
+
+<!-- Input -->
+<div class="extract-input-area">
+  <h2>NUEVO LOTE DE EXTRACCIÓN</h2>
+  <textarea
+    rows="3"
+    placeholder="Pega URLs o IDs: https://automationexercise.com/product_details/1, 2, 5, 10"
+    [(ngModel)]="urlInput"
+  ></textarea>
+  <div class="btn-row">
+    <button
+      (click)="startExtraction()"
+      [disabled]="isSubmitting || !urlInput.trim()"
+      class="btn btn-primary"
+      style="padding: 14px 28px;">
+      {{ isSubmitting ? 'INICIANDO...' : 'INICIAR EXTRACCIÓN' }}
+    </button>
+  </div>
+</div>
+
+<!-- Live Panel -->
+<div *ngIf="currentJob" class="live-panel">
+  <div class="live-header">
+    <div class="live-meta">
+      <div class="live-info">
+        <div style="margin-bottom: 8px;">
+          <span class="status-badge"
+                [class.bg-processing]="isJobActive()"
+                [class.bg-success]="currentJob.status === 'COMPLETED'"
+                [class.bg-failed]="currentJob.status === 'FAILED'"
+                [class.bg-pending]="currentJob.status === 'PENDING'">
+            {{ currentJob.status }}
+          </span>
+        </div>
+        <h2>{{ currentJob.processed }} / {{ currentJob.total }} PROCESADOS</h2>
+        <span class="job-id">Job: {{ currentJob.id }}</span>
+      </div>
+
+      <div class="stat-boxes">
+        <div class="stat-box">
+          <span class="stat-num success">{{ currentJob.successful }}</span>
+          <span class="stat-label">Éxitos</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-num fail">{{ currentJob.failed }}</span>
+          <span class="stat-label">Fallos</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="progress-track">
+      <div class="progress-fill" [style.width.%]="getProgressPercentage()"></div>
+    </div>
+  </div>
+
+  <!-- Items -->
+  <div class="items-section">
+    <h3>ESTADO DE PRODUCTOS</h3>
+    <div class="items-list">
+      <div *ngFor="let item of jobItems"
+           class="extraction-item"
+           [class.item-success]="item.status === 'SUCCESS'"
+           [class.item-failed]="item.status === 'FAILED'"
+           [class.item-processing]="item.status === 'PROCESSING'">
+        <div>
+          <span class="item-id">#{{ item.externalProductId }}</span>
+          <p *ngIf="item.status === 'FAILED' && item.errorMessage" class="item-error">
+            {{ item.errorMessage }}
+          </p>
+        </div>
+        <span class="item-status"
+              [class.s-success]="item.status === 'SUCCESS'"
+              [class.s-failed]="item.status === 'FAILED'"
+              [class.s-processing]="item.status === 'PROCESSING'"
+              [class.s-pending]="item.status === 'PENDING'">
+          {{ item.status }}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

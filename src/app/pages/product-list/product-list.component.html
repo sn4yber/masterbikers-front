@@ -1,0 +1,167 @@
+<!-- Header -->
+<div style="margin-bottom: 2rem;">
+  <h1 class="page-title">Catálogo de Repuestos</h1>
+  <p class="page-subtitle">Repuestos originales · 5 marcas · Envío nacional</p>
+</div>
+
+<!-- Brand Selector -->
+<div class="brands-strip">
+  <div *ngFor="let brand of availableBrands"
+       class="brand-chip"
+       [class.active]="filters.brand.toLowerCase() === brand.name.toLowerCase()"
+       (click)="selectBrand(brand.name)">
+    <img [src]="brand.icon" [alt]="brand.name">
+    <span>{{ brand.name }}</span>
+  </div>
+</div>
+
+<!-- Filters -->
+<div class="filters-row">
+  <div class="form-group">
+    <label>Nombre</label>
+    <input type="text" [(ngModel)]="filters.name" placeholder="Buscar repuesto..." (keydown.enter)="applyFilters()">
+  </div>
+  <div class="form-group">
+    <label>Marca</label>
+    <input type="text" [(ngModel)]="filters.brand" placeholder="Honda, Yamaha..." (keydown.enter)="applyFilters()">
+  </div>
+  <div class="form-group">
+    <label>Categoría</label>
+    <input type="text" [(ngModel)]="filters.category" placeholder="Motor, Frenos..." (keydown.enter)="applyFilters()">
+  </div>
+  <div class="filter-actions">
+    <button (click)="applyFilters()" class="btn btn-primary">Buscar</button>
+    <button (click)="clearFilters()" class="btn btn-outline">Limpiar</button>
+  </div>
+</div>
+
+<!-- Stats bar -->
+<div class="stats-bar">
+  <span class="results-count"><strong>{{ totalElements }}</strong> repuestos encontrados</span>
+  <span class="results-count" *ngIf="filters.brand">
+    Filtrando: <strong>{{ filters.brand }}</strong>
+  </span>
+</div>
+<div style="color: #666; font-size: 0.8rem; margin-bottom: 1rem; text-align: center;">
+  DEBUG: {{ debugInfo }}
+</div>
+
+<!-- Product Grid -->
+<div class="product-grid" *ngIf="products.length > 0; else emptyBlock">
+  <div *ngFor="let product of products" class="product-card">
+
+    <!-- Visual -->
+    <div class="card-visual">
+      <img [src]="product.localImage" [alt]="product.name">
+      <span class="card-badge" *ngIf="product.brand">{{ product.brand }}</span>
+      <span class="stock-tag"
+            [class.in-stock]="product.availability === 'IN_STOCK'"
+            [class.out-of-stock]="product.availability === 'OUT_OF_STOCK'"
+            [class.unknown]="product.availability === 'UNKNOWN'">
+        {{ getAvailabilityLabel(product.availability) }}
+      </span>
+    </div>
+
+    <!-- Body -->
+    <div class="card-body">
+      <span class="card-category">{{ product.category || 'General' }}</span>
+      <h3 class="card-title">{{ product.name }}</h3>
+      <p class="card-desc">{{ product.description }}</p>
+      <div class="card-bottom">
+        <span class="card-price">${{ product.price | number:'1.0-0' }}<span class="currency">COP</span></span>
+        <span class="condition-pill"
+              [class.new]="product.condition === 'NEW'"
+              [class.used]="product.condition === 'USED'"
+              [class.refurb]="product.condition === 'REFURBISHED'">
+          {{ getConditionLabel(product.condition) }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="card-actions">
+      <button (click)="openEditModal(product)">Editar</button>
+      <button class="btn-delete" (click)="deleteProduct(product.id)">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Empty State -->
+<ng-template #emptyBlock>
+  <div class="empty-state" *ngIf="!isLoading">
+    <div class="empty-icon">🔧</div>
+    <h3>No hay repuestos</h3>
+    <p>Prueba cambiando los filtros o selecciona otra marca</p>
+  </div>
+</ng-template>
+
+<!-- Edit Modal -->
+<div *ngIf="editingProduct" class="modal-overlay" (click)="closeEditModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-body">
+      <h3 class="modal-title">Editar Repuesto</h3>
+
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div class="form-group">
+          <label>Nombre</label>
+          <input type="text" [(ngModel)]="editForm.name">
+        </div>
+
+        <div style="display: flex; gap: 12px;">
+          <!-- Image Override (Atajo) -->
+          <div class="form-group">
+            <label>Archivo de Imagen (Carpeta public/)</label>
+            <input type="text" [(ngModel)]="editForm.sourceUrl" placeholder="Ej: casco-rojo.png" />
+            <small style="color: #666; font-size: 0.8rem;">Opcional. Si lo dejas vacío, se asignará automáticamente por el nombre.</small>
+          </div>
+
+          <div class="form-group">
+            <label>Precio (COP)</label>
+            <input type="number" [(ngModel)]="editForm.price" />
+          </div>
+          <div class="form-group">
+            <label>Marca</label>
+            <input type="text" [(ngModel)]="editForm.brand">
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px;">
+          <div class="form-group">
+            <label>Categoría</label>
+            <input type="text" [(ngModel)]="editForm.category">
+          </div>
+          <div class="form-group">
+            <label>Condición</label>
+            <select [(ngModel)]="editForm.condition">
+              <option value="NEW">Nuevo</option>
+              <option value="USED">Usado</option>
+              <option value="REFURBISHED">Reacondicionado</option>
+              <option value="UNKNOWN">Desconocido</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Disponibilidad</label>
+          <select [(ngModel)]="editForm.availability">
+            <option value="IN_STOCK">En Stock</option>
+            <option value="OUT_OF_STOCK">Agotado</option>
+            <option value="UNKNOWN">Desconocido</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Descripción</label>
+          <textarea [(ngModel)]="editForm.description" rows="3"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" (click)="closeEditModal()" class="btn btn-outline">Cancelar</button>
+      <button type="button" (click)="saveEdit()" [disabled]="isSaving" class="btn btn-primary">
+        {{ isSaving ? 'Guardando...' : 'Guardar Cambios' }}
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,7 @@
+:host { display: block; min-height: 100vh; }
+
+.logo-text {
+  text-decoration: none;
+  color: #fff;
+}
+.logo-text:hover { opacity: 0.9; }

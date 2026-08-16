@@ -1,0 +1,52 @@
+<!-- Hero Section -->
+<section class="hero">
+  <div class="hero-content">
+    <p class="hero-tag accent-block">Tu pasión, nuestra dedicación</p>
+    <h1 class="hero-title-white">MASTER</h1>
+    <h1 class="hero-title-red">BIKERS</h1>
+    <p class="hero-desc">
+      El catálogo más completo de <strong>repuestos de motocicleta</strong>. 
+      Encuentra piezas originales y genéricas para tu compañera de rutas.
+    </p>
+    <p class="hero-desc-sub">
+      Envíos a nivel nacional. Soporte técnico especializado.
+    </p>
+    <div class="hero-actions">
+      <a routerLink="/products" class="btn btn-primary">Ver Catálogo</a>
+    </div>
+  </div>
+</section>
+
+<!-- Brands -->
+<section class="section">
+  <div class="section-header">
+    <p class="section-tag accent-block">Respaldados por los mejores</p>
+    <h2 class="section-title">NUESTRAS<br><span class="red">MARCAS</span></h2>
+  </div>
+  <div class="brands-row">
+    <a *ngFor="let brand of brands"
+       [routerLink]="['/products']"
+       [queryParams]="{brand: brand.name}"
+       class="brand-logo-card">
+      <img [src]="brand.icon" [alt]="brand.name">
+      <span>{{ brand.name }}</span>
+    </a>
+  </div>
+</section>
+
+<!-- Features (Now Promotions) -->
+<section class="section">
+  <div class="section-header">
+    <p class="section-tag accent-block">Destacados de la semana</p>
+    <h2 class="section-title">OFERTAS Y<br><span class="red">NOVEDADES</span></h2>
+  </div>
+  <div class="features-grid">
+    <div *ngFor="let promo of promotions" class="feature-card">
+      <div class="feature-head">
+        <span class="feature-slash">/</span>
+        <h3>{{ promo.title }}</h3>
+      </div>
+      <p>{{ promo.desc }}</p>
+    </div>
+  </div>
+</section>

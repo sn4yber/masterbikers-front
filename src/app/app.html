@@ -1,0 +1,16 @@
+<div class="header">
+  <div class="header-inner">
+    <div class="logo-container">
+      <a routerLink="/" class="logo-text">Master<span>Bikers</span></a>
+    </div>
+    <nav class="nav-links">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Inicio</a>
+      <a routerLink="/products" routerLinkActive="active">Catálogo</a>
+      <a routerLink="/extractions" routerLinkActive="active">Scraping Hub</a>
+    </nav>
+  </div>
+</div>
+
+<main class="container">
+  <router-outlet></router-outlet>
+</main>
