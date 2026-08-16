@@ -77,14 +77,7 @@ La aplicación se conecta al backend desarrollado para la prueba y ofrece dos m�
 
 ---
 
-## 🤖 Uso de Inteligencia Artificial
 
-Durante el desarrollo de esta interfaz, se utilizaron asistentes de IA (Google DeepMind / Antigravity) principalmente para:
-- **Generación de Mockups/Imágenes:** Creación de placeholders visuales para los productos.
-- **Pair Programming:** Depuración de ciclos de *Change Detection* en Angular (resolución de un edge case donde el observable asíncrono no disparaba la actualización de la vista durante la carga inicial).
-- **Refactorización de CSS:** Ajustes de responsividad y pulido estético rápido.
-
----
 
 ## 🔮 Qué mejoraría con más tiempo
 
