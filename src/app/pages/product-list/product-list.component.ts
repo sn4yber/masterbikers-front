@@ -194,7 +194,7 @@ export class ProductListComponent implements OnInit {
     });
   }
 
-  getPlaceholderImage(category: string | null, name: string | null, sourceUrl: string | undefined): string {
+  getPlaceholderImage(category: string | null, name: string | null, sourceUrl: string | null | undefined): string {
     if (sourceUrl && (sourceUrl.endsWith('.png') || sourceUrl.endsWith('.jpg'))) {
         return sourceUrl;
     }
